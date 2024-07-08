@@ -1,0 +1,1475 @@
+{
+	"info": {
+		"_postman_id": "265ad450-7b88-47f5-a0bf-24efa0bba28b",
+		"name": "Client API - Dev",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Clinical API - Dev 3-22-22",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "auth",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"bodyData = JSON.parse(responseBody);",
+											"authToken = bodyData.access_token;",
+											"pm.environment.set(\"access_token\",authToken);",
+											"//console.log(authToken);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{devPassword}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{devUserName}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "grant_type",
+											"value": "client_credentials",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{devAuthURL}}/oauth2/token",
+									"host": [
+										"{{devAuthURL}}"
+									],
+									"path": [
+										"oauth2",
+										"token"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "organizations",
+					"item": [
+						{
+							"name": "getOrgID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {},
+								"strictSSL": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getOrgPrograms",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {},
+								"strictSSL": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/programs",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"programs"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "patients",
+					"item": [
+						{
+							"name": "postPatient",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"bodyData = JSON.parse(responseBody);",
+											"pId = bodyData.id;",
+											"pm.environment.set(\"devPatientId\",pId);",
+											"",
+											"bodyData = JSON.parse(responseBody);",
+											"pId = bodyData.first_name;",
+											"pm.environment.set(\"devPatientFname\",pId);",
+											"",
+											"bodyData = JSON.parse(responseBody);",
+											"pId = bodyData.email;",
+											"pm.environment.set(\"devPatientEmail\",pId);",
+											"",
+											"bodyData = JSON.parse(responseBody);",
+											"pId = bodyData.gender;",
+											"pm.environment.set(\"devPatientGender\",pId);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"date_of_birth\": \"{{$randomDatePast}}\",\n  \"email\": \"{{$randomFirstName}}{{$randomInt}}@qatest.com\",\n  \"first_name\": \"{{$randomFirstName}}{{$randomInt}}\",\n  \"gender\": \"m\",\n  \"home_phone\": \"{{$randomPhoneNumber}}\",\n  \"last_name\": \"Li\",\n  \"mobile_phone\": \"{{$randomPhoneNumber}}\",\n  \"practitioner_id\": \"{{devPractitionerId}}\",\n  \"preferred_communication_channel\": \"sms\",\n  \"id\": \"{{$randomBankAccount}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getPatientbyId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getPatientToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/tokens",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patchPatient",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"date_of_birth\": \"2012-02-24T23:34:43.581Z\",\n  \"email\": \"{{devPatientEmail}}\",\n  \"first_name\": \"{{devPatientFname}}\",\n  \"gender\": \"{{devPatientGender}}\",\n  \"home_phone\": \"{{$randomPhoneNumber}}\",\n  \"last_name\": \"Li\",\n  \"mobile_phone\": \"{{$randomPhoneNumber}}\",\n  \"practitioner_id\": \"{{devPractitionerId}}\",\n  \"preferred_communication_channel\": \"Email\",\n  \"state\": \"OR\",\n  \"street_address1\": \"{{$randomInt}} NW 14th Ave, Portland\",\n  \"street_address2\": \"c/o Phil Marshall\",\n  \"zip_code\": \"97209\",\n  \"id\": \"QAid-151\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "enrollments - todo",
+					"item": [
+						{
+							"name": "postEnrollments",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"bodyData = JSON.parse(responseBody);",
+											"pId = bodyData.id;",
+											"pm.environment.set(\"devEnrollmentId\",pId);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"re_enroll\": false,\n  \"active\": true,\n  \"enrollment_question_answers\": [\n    {\n      \"concept\": \"C0428565\",\n      \"value\": \"115\"      \n    },\n        {\n      \"concept\": \"C0428566\",\n      \"value\": \"120\"      \n    },\n        {\n      \"concept\": \"C0428568\",\n      \"value\": \"130\"      \n    }\n  ],\n  \"program_id\": 3604\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/enrollments",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"enrollments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getEnrollments",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/enrollments?id={{devEnrollmentId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"enrollments"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{devEnrollmentId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getEnrollmentsById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/enrollments/{{devEnrollmentId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"enrollments",
+										"{{devEnrollmentId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patchEnrollmentsById - todo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"re_enroll\": false,\n  \"active\": false\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/enrollments/{{devEnrollmentId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"enrollments",
+										"{{devEnrollmentId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "postPatientCommunication",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientcommunicationId}}/resend_communication",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientcommunicationId}}",
+										"resend_communication"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "chats",
+					"item": [
+						{
+							"name": "getChat - neet get patient chat id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/chats",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"chats"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getChatbyId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/chats/?id={{chatId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"chats",
+										""
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{chatId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "caregivers",
+					"item": [
+						{
+							"name": "postCaregivers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"bodyData = JSON.parse(responseBody);",
+											"pId = bodyData.id;",
+											"pm.environment.set(\"devCaregiverId\",pId);",
+											"",
+											"bodyData = JSON.parse(responseBody);",
+											"pId = bodyData.first_name;",
+											"pm.environment.set(\"CaregiverFname\",pId);",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"first_name\": \"{{$randomFirstName}}\",\n  \"last_name\": \"Caregiver\",\n  \"email\": \"{{$randomEmail}}\",\n  \"mobile_phone\": \"{{$randomPhoneNumber}}\",\n  \"preferred_communication_channel\": \"sms\",\n  \"preferred_language\": \"en\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/caregivers",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"caregivers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getCaregivers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/caregivers",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"caregivers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getCaregiversbyID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/caregivers/{{devCaregiverId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"caregivers",
+										"{{devCaregiverId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patchCaregivers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 202\", function () {",
+											"    pm.response.to.have.status(202);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"first_name\": \"{{CaregiverFname}}\",\n  \"last_name\": \"Li\",\n  \"email\": \"{{$randomEmail}}\",\n  \"mobile_phone\": \"{{$randomPhoneNumber}}\",\n  \"preferred_communication_channel\": \"sms\",\n  \"preferred_language\": \"en\",\n  \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/caregivers/{{devCaregiverId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"caregivers",
+										"{{devCaregiverId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "concepts",
+					"item": [
+						{
+							"name": "postConcepts",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"value\": \"30\",\n  \"units\": \"kg/m2\",\n  \"source\": \"Patient\",\n  \"source_id\": 160102,\n  \"observed_at\": \"2020-02-06T19:09:00Z\",\n  \"active\": true,\n  \"id\": \"C0428883\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/concepts",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"concepts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getConcepts",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/concepts",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"concepts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getConceptById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/concepts/{{devConceptId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"concepts",
+										"{{devConceptId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patchConceptsById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"value\": \"30\",\n  \"units\": \"kg/m2\",\n  \"source\": \"Patient\",\n  \"source_id\": 160102,\n  \"observed_at\": \"2020-02-06T19:09:00Z\",\n  \"active\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/patients/{{devPatientId}}/concepts/{{devConceptId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"patients",
+										"{{devPatientId}}",
+										"concepts",
+										"{{devConceptId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "paractitioners - todo",
+					"item": [
+						{
+							"name": "getPractitioners",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/practitioners",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"practitioners"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getPractitionersById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/practitioners/{{devPractitionerId}}",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"practitioners",
+										"{{devPractitionerId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "patchPractitionersById - todo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"77472948-be81-4f78-b4a1-27b07e6783fe\",\n  \"first_name\": \"Michell\",\n  \"middle_name\": \"Provider\",\n  \"last_name\": \"Lei\",\n  \"email\": \"provider.lei1@example.com\",\n  \"organizations\": [\n    \"d836ff37-bfef-4550-aeb6-5089a82072b4\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/practitioners/77472948-be81-4f78-b4a1-27b07e6783fe",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"practitioners",
+										"77472948-be81-4f78-b4a1-27b07e6783fe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "postPractitioners - no post",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 422\", function () {",
+											"    pm.response.to.have.status(422);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X_AMZN_OIDC_DATA",
+										"value": "{{access_token}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"{{$randomUUID}}\",\n  \"first_name\": \"Eva\",\n  \"middle_name\": \"P\",\n  \"last_name\": \"Lei\",\n  \"email\": \"provider.lei1@example.com\",\n  \"organizations\": [\n    \"{{enter devOrgId here}}\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{devURL}}/api/clinical/v1/organizations/{{devOrgId}}/practitioners",
+									"host": [
+										"{{devURL}}"
+									],
+									"path": [
+										"api",
+										"clinical",
+										"v1",
+										"organizations",
+										"{{devOrgId}}",
+										"practitioners"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "devAuth",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "devURL",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "devUsername",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "devPassword",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
